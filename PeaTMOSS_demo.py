@@ -2,8 +2,6 @@ import sqlalchemy
 from sqlalchemy.orm import Session
 import PeaTMOSS
 
-### It is recommended to run this demo using Python 3.11, or you may run into issues with sqlalchemy.orm
-
 ### This demo is an example of how one could use SQLAlchemy to interact with the PeaTMOSS database in order to answer
 ### one of the research questions, in this case question I1: "It can be difficult to interpret model popularity numbers by 
 ### download rates. To what extent does a PTM’s download rates correlate with the number of GitHub projects that rely on it, or 
