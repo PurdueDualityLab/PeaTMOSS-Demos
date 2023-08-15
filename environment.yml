@@ -1,0 +1,9 @@
+name: PeaTMOSS
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.11
+  - pip
+  - conda-forge::sqlalchemy>=2.0
