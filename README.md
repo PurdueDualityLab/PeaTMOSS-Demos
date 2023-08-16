@@ -86,7 +86,37 @@ Alternatively, you can navigate to each packages respective pages and install th
 This section will explain how to use SQL and SQLAlchemy to interact with the database to answer the research questions outlined in the proposal. 
 
 ### Using SQL to query the database
-The metadata dataset is stored in a SQLite database file called PeaTMOSS.db, which can be found in the Globus Share: https://transfer.rcac.purdue.edu/file-manager?origin_id=c4ec6812-3315-11ee-b543-e72de9e39f95&origin_path=%2F. This file can be queried through standard SQL queries, and this can be done from a terminal using sqlite3: https://sqlite.org/cli.html. Single queries can be executed like ```sqlite3 PeaTMOSS.db '{query statement}'```. Alternatively, you can start an SQLite instance by simply executing ```sqlite3 PeaTMOSS.db```, which can be terminated by CTRL + D. To output queries to files, the .output command can be used as such: ```sqlite> .output {filename}.txt```. The following example has to do with research question:
+The metadata dataset is stored in a SQLite database file called PeaTMOSS.db, which can be found in the Globus Share: https://transfer.rcac.purdue.edu/file-manager?origin_id=c4ec6812-3315-11ee-b543-e72de9e39f95&origin_path=%2F. This file can be queried through standard SQL queries, and this can be done from a terminal using sqlite3: https://sqlite.org/cli.html. Single queries can be executed like ```sqlite3 PeaTMOSS.db '{query statement}'```. Alternatively, you can start an SQLite instance by simply executing ```sqlite3 PeaTMOSS.db```, which can be terminated by CTRL + D. To output queries to files, the .output command can be used as such: ```sqlite> .output {filename}.txt```. The following example has to do with research question GH2: "What do developers on GitHub discuss related to PTM use, e.g., in issues, and pull requests? What are developers’ sentiments regarding PTM use? Do the people do pull requests of PTMs have the right expertise?" 
+
+If someone wants to observe what developers on GitHub are currently discussing related to PTM usage, they can look at discussions in GitHub issues and pull requests. The following SQLite example shows queries that would help accomplish this task.
+
+First, we will create an sqlite3 instance:
+```$ sqlite3 PeaTMOSS.db```
+
+Then, we will create an output file for our issues query, then execute that query:
+```
+sqlite> .output issues.txt
+sqlite> SELECT id, title FROM github_issue WHERE state = 'OPEN' ORDER BY updated_at DESC LIMIT 100;
+```
+Output:
+
+<img width="614" alt="6c66d24cac7cf9542f91d4a875bb1abe" src="https://github.com/PurdueDualityLab/PeaTMOSS-Demos/assets/70859381/3f6d9508-76de-4386-808b-0d9157a8392b">
+
+The above query selects the ID and Title fields from the github_issue table, and chooses the 100 most recent issues that are still open.
+
+Next, we will create an output file for our pull requests query, then execute that query:
+```
+sqlite> .output pull_requests.txt
+sqlite> SELECT id, title FROM github_pull_request WHERE state = 'OPEN' OR state = 'MERGED' ORDER BY updated_at DESC LIMIT 100;
+```
+Output:
+
+<img width="611" alt="b128657ee024e2441110090f3bc19ea6" src="https://github.com/PurdueDualityLab/PeaTMOSS-Demos/assets/70859381/b3773972-9dd0-43e6-8244-3ab1ac94d4dc">
+
+Notice that the query is very similar to the issues query, as we are looking for similar information. The above query selects the ID and Title fields from the github_pull_request table, and chooses the 100 most recent pull requests that are either open or merged.
+
+Querying this data can assist when beginning to observe current/recent discussions in GitHub about PTMs. From here, you may adjust these queries to include more/less entries by changing the LIMIT value, or you may adjust which fields the queries return. For example, if you want more detailed information you could select the "body" field in either table.
+
 
 ## How to Run
 
