@@ -17,8 +17,8 @@ If you do not have an account, follow the Globus docs on how to sign up: https:/
   - [Dependencies](#dependencies)
   - [How To Install](#how-to-install)
   - [Tutorial](#tutorial)
-    - [SQL](#Using-SQL-to-query-the-database)
-    - [ORM](#Using-ORMs-to-query-the-database)
+    - [SQL](#using-SQL-to-query-the-database)
+    - [ORM](#using-ORMs-to-query-the-database)
   - [How to Run](#how-to-run)
 
 
