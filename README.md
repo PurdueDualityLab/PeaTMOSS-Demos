@@ -5,14 +5,27 @@ A repository that holds demos on interactions with the PeaTMOSS Dataset, submitt
 ## Globus
 
 ### Globus Share
-All zipped repos and the full metadata dataset are available through Globus Share: https://transfer.rcac.purdue.edu/file-manager?origin_id=c4ec6812-3315-11ee-b543-e72de9e39f95&origin_path=%2F
+All zipped repos and the full metadata dataset are available through [Globus Share](https://transfer.rcac.purdue.edu/file-manager?origin_id=c4ec6812-3315-11ee-b543-e72de9e39f95&origin_path=%2F)
 
-If you do not have an account, follow the Globus docs on how to sign up: https://docs.globus.org/how-to/get-started/. You may create an account through a partnered organization if you are a part of that organization, or through Google or ORCID accounts.
+If you do not have an account, follow the Globus docs on [how to sign up](https://docs.globus.org/how-to/get-started/). You may create an account through a partnered organization if you are a part of that organization, or through Google or ORCID accounts.
 
 ### Globus Connect Personal
-1. To access the metadata dataset using the ```globus.py``` script provided in the repository, follow the instructions to download Globus Connect Personal to create your own private Globus collection: https://docs.globus.org/how-to/globus-connect-personal-windows/.
-2. Once this is created, ensure the application is running before running ```globus.py```.
-3. In some cases, you may run into permission issues on Globus when running the script. If this is the case, look for line 29: ```local_endpoint_id = local_endpoint.endpoint_id```, as you will need to change "local_endpoint.endpoint_id" to your private collection's UUID. To locate this, right click on your Globus icon on your taskbar, and select "Web: Collection Details". Once this page opens, scroll down to the bottom where the UUID field for your collection should be visible. Terminate the existing transfer, replace the variable with your collection's UUID as a string, and rerun globus.py.
+To access the metadata dataset using the `globus.py` script provided in the repository:
+1. [Download Globus Connect Personal](https://www.globus.org/globus-connect-personal)
+1. Create your own private Globus collection on
+[Mac](https://docs.globus.org/how-to/globus-connect-personal-mac/),
+[Windows](https://docs.globus.org/how-to/globus-connect-personal-windows/.), or
+[Linux](https://docs.globus.org/how-to/globus-connect-personal-linux/)
+1. Once this is created, make sure your Globus Personal Connect is running before executing `globus.py`
+
+**NOTE:** In some cases, you may run into permission issues on Globus when running the script.
+If this is the case, you will need to change `local_endpoint.endpoint_id`, located on [line 29](globus.py#29), to your private collection's UUID:
+```python
+local_endpoint_id = local_endpoint.endpoint_id
+``` 
+
+To locate your private collecion's UUID, click on the Globus icon on your taskbar and select "Web: Collection Details".
+On this page, scroll down to the bottom where the UUID field for your collection should be visible. Terminate the existing transfer, replace the variable with your collection's UUID as a string, and rerun globus.py.
 
  
 ## Table of Contents
