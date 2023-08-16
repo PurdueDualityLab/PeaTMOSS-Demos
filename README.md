@@ -1,5 +1,29 @@
 # PeaTMOSS-Demos
-A repository that holds demos on interactions with the PeaTMOSS Dataset, submitted to the MSR 2024 Mining Challenge.
+This repository contains information about the **P**re-**T**rained **M**odels in **O**pen-**S**ource **S**oftware (***PeaTMOSS***) dataset proposed for the 2024 MSR Mining Challenge.
+
+## Table of Contents
+- [PeaTMOSS Demos](#peatmoss-demos)
+  - [About](#about)
+  - [Globus](#globus)
+  - [Metadata Description](#metadata-description)
+  - [Dependencies](#dependencies)
+  - [How To Install](#how-to-install)
+  - [Tutorial](#tutorial)
+  - [How to Run](#how-to-run)
+
+## About
+
+This repository contains a [zipped sample](PeaTMOSS_Sample.db.zip) of the *PeaTMOSS* dataset,
+as well as a script that demonstrates possible interactions with the SQLite database used to store the metadata dataset.
+The complete *PeaTMOSS* dataset contains snapshots of **P**re-**T**rained machine learning **M**odel (PTM) repositories and the downstream Open-Source GitHub repositories that reuse the PTMs,
+metadata about the PTMs,
+the pull requests and issues of the GitHub Repositories,
+and links between the downstream GitHub repositories and the PTM models.
+The schema of the SQLite database is specified by [PeaTMOSS.py](PeaTMOSS.py) and [PeatMOSS.sql](PeatMOSS.sql).
+The sample of the database is [PeaTMOSS_sample.db](PeaTMOSS_sample.db).
+The full database, as well as all captured repository snapshots are available [here](https://transfer.rcac.purdue.edu/file-manager?origin_id=c4ec6812-3315-11ee-b543-e72de9e39f95&origin_path=%2F)
+#### - Note: When unzipping .tar.gz snapshots, include the ```--strip-components=4``` flag in the tar statement, ex: ```tar --strip-components=4 -xvzf {name}.tar.gz```. If you do not do this, you will have 4 extraneous parent directories that encase the repository.
+
 
 
 ## Globus
@@ -25,21 +49,16 @@ local_endpoint_id = local_endpoint.endpoint_id
 ``` 
 
 To locate your private collecion's UUID, click on the Globus icon on your taskbar and select "Web: Collection Details".
-On this page, scroll down to the bottom where the UUID field for your collection should be visible. Terminate the existing transfer, replace the variable with your collection's UUID as a string, and rerun globus.py.
+On this page, scroll down to the bottom where the UUID field for your collection should be visible, and replace the variable with your collection's UUID expressed as a string.
+Then, use the activities tab to terminate the existing transfer and rerun globus.py.
 
  
-## Table of Contents
-- [PeaTMOSS Demos](#peatmoss-demos)
-  - [Metadata Description](#metadata-description)
-  - [About](#about)
-    - [Captured Model Hubs](#captured-model-hubs)
-  - [Dependencies](#dependencies)
-  - [How To Install](#how-to-install)
-  - [Tutorial](#tutorial)
-  - [How to Run](#how-to-run)
-
-
 ## Metadata Description
+The following model hubs are captured in our database:
+
+- [Hugging Face](https://huggingface.co/)
+- [PyTorch Hub](https://pytorch.org/hub/)
+
 The content for each specific model hub is listed in the table below:
 
 |   Model hub  |  #PTMs  | #Snapshotted Repos | #Discussions (PRs, issues) | #Links | Size of Zipped Snapshots |
@@ -52,26 +71,6 @@ We also offer two different formats of our datasets to facilitate the mining cha
 |:--------:|:------------------------------------------------------------------------------------------------------------------------------------------------:|:------:|
 | Metadata |                          It contains only the metadata of the PTM packagesr and a subset of the GitHub project metadata.                         |  6.7GB |
 |   Full   | It contains all metadata, adding the PTM package contents in each published version, and git history of the main branhes of the GitHub projects. | 48.2TB |
-
-## About
-
-This repository contains a sample of the *PeaTMOSS* dataset,
-as well as scripts that demonstrate possible interactions with the SQLite database used to store the metadata dataset.
-The *PeaTMOSS* dataset dataset contains snapshots of **P**re-**T**rained machine learning **M**odel (PTM) repositories and the downstream Open-Source GitHub repositories that reuse the PTMs,
-metadata about the PTMs,
-the pull requests and issues of the GitHub Repositories,
-and links between the downstream GitHub repositories and the PTM models.
-The schema of the SQLite database is specified by [PeaTMOSS.py](PeaTMOSS.py) and [PeatMOSS.sql](PeatMOSS.sql).
-The sample of the database is [PeaTMOSS_sample.db](PeaTMOSS_sample.db).
-The full database, as well as all captured repository snapshots are available here: https://transfer.rcac.purdue.edu/file-manager?origin_id=c4ec6812-3315-11ee-b543-e72de9e39f95&origin_path=%2F
-#### - Note: When unzipping .tar.gz snapshots, include the ```--strip-components=4``` flag in the tar statement, ex: ```tar --strip-components=4 -xvzf {name}.tar.gz```. If you do not do this, you will have 4 extraneous parent directories that encase the repository.
-
-### Captured Model Hubs
-
-The following model hubs are captured in our database:
-
-- [Hugging Face](https://huggingface.co/)
-- [PyTorch Hub](https://pytorch.org/hub/)
 
 ## Dependencies
 
@@ -93,6 +92,10 @@ These package can be installed using the `anaconda` environment manager
 1. Activate the environment using `conda activate PeaTMOSS`
 
 Alternatively, you can navigate to each packages respective pages and install them.
+
+## How to Run
+
+After [installing the anaconda environment](#how-to-install), each demo script can be run using `python3 script_name.py`
 
 ## Tutorial
 This section will explain how to use SQL and SQLAlchemy to interact with the database to answer the research questions outlined in the proposal. 
@@ -181,7 +184,3 @@ Download Results:
 Reuse Results:
 
 <img width="656" alt="003113aa18d146f9babc7e9ae1c6c3e0" src="https://github.com/PurdueDualityLab/PeaTMOSS-Demos/assets/70859381/6b835260-8afa-4f1b-9104-9d6a54c9ed44">
-
-## How to Run
-
-After [installing the anaconda environment](#how-to-install), each demo script can be run using `python3 script_name.py`
