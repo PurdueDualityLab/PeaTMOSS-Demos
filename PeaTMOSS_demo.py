@@ -10,7 +10,7 @@ import PeaTMOSS
 if __name__ == "__main__":
 
     ### When creating an absolute path string, make sure there is a leading forward slash (/)
-    absolute_path = "/scratch/bell/rsashti/sql_db/PeaTMOSS.db"
+    absolute_path = "/scratch/bell/rsashti/sql_db/PeaTMOSS.db" #change this to an appropriate filepath for your directory
     engine = sqlalchemy.create_engine(f"sqlite:///{absolute_path}")
     # relative_path = "PeaTMOSS.db"
     # engine = sqlalchemy.create_engine(f"sqlite:///{relative_path}")
