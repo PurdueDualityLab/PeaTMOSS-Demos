@@ -99,7 +99,8 @@ sqlite> .output issues.txt
 sqlite> SELECT id, title FROM github_issue WHERE state = 'OPEN' ORDER BY updated_at DESC LIMIT 100;
 ```
 Output:
-![Alt text](image-2.png)
+<img width="614" alt="6c66d24cac7cf9542f91d4a875bb1abe" src="https://github.com/PurdueDualityLab/PeaTMOSS-Demos/assets/70859381/3f6d9508-76de-4386-808b-0d9157a8392b">
+
 The above query selects the ID and Title fields from the github_issue table, and chooses the 100 most recent issues that are still open.
 
 Next, we will create an output file for our pull requests query, then execute that query:
