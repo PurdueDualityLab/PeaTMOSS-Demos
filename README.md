@@ -1,8 +1,10 @@
 # PeaTMOSS-Demos
 A repository that holds demos on interactions with the PeaTMOSS Dataset, submitted to the MSR 2024 Mining Challenge.
 
-Link to Globus Share containing all zipped repos and full metadata dataset: https://transfer.rcac.purdue.edu/file-manager?origin_id=c4ec6812-3315-11ee-b543-e72de9e39f95&origin_path=%2F
 
+## Globus Share
+All zipped repos and the full metadata dataset are available through Globus Share: https://transfer.rcac.purdue.edu/file-manager?origin_id=c4ec6812-3315-11ee-b543-e72de9e39f95&origin_path=%2F
+If you do not have an account, follow the Globus docs on how to sign up: https://docs.globus.org/how-to/get-started/. You may create an account through a partnered organization if you are a part of that organization, or through Google or ORCID accounts.
 
 # include note about unzipping tar files
 
