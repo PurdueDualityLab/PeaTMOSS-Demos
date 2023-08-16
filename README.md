@@ -10,7 +10,9 @@ All zipped repos and the full metadata dataset are available through Globus Shar
 If you do not have an account, follow the Globus docs on how to sign up: https://docs.globus.org/how-to/get-started/. You may create an account through a partnered organization if you are a part of that organization, or through Google or ORCID accounts.
 
 ### Globus Connect Personal
-To access the metadata dataset using the globus.py script provided in the repository, follow the instructions to download Globus Connect Personal to create your own private Globus collection: https://docs.globus.org/how-to/globus-connect-personal-windows/. Once this is created, ensure the application is running before running globus.py. In some cases, you may run into permission issues on Globus when running the script. If this is the case, look for the line: ```local_endpoint_id = local_endpoint.endpoint_id```, as you will need to change "local_endpoint.endpoint_id" to your private collection's UUID. To locate this, right click on your Globus icon on your taskbar, and select "Web: Collection Details". Once this page opens, scroll down to the bottom where the UUID field for your collection should be visible. Terminate the existing transfer, replace the variable with your collection's UUID as a string, and rerun globus.py.
+1. To access the metadata dataset using the ```globus.py``` script provided in the repository, follow the instructions to download Globus Connect Personal to create your own private Globus collection: https://docs.globus.org/how-to/globus-connect-personal-windows/.
+2. Once this is created, ensure the application is running before running ```globus.py```.
+3. In some cases, you may run into permission issues on Globus when running the script. If this is the case, look for line 29: ```local_endpoint_id = local_endpoint.endpoint_id```, as you will need to change "local_endpoint.endpoint_id" to your private collection's UUID. To locate this, right click on your Globus icon on your taskbar, and select "Web: Collection Details". Once this page opens, scroll down to the bottom where the UUID field for your collection should be visible. Terminate the existing transfer, replace the variable with your collection's UUID as a string, and rerun globus.py.
 
  
 ## Table of Contents
@@ -49,7 +51,7 @@ and links between the downstream GitHub repositories and the PTM models.
 The schema of the SQLite database is specified by [PeaTMOSS.py](PeaTMOSS.py) and [PeatMOSS.sql](PeatMOSS.sql).
 The sample of the database is [PeaTMOSS_sample.db](PeaTMOSS_sample.db).
 The full database, as well as all captured repository snapshots are available here: https://transfer.rcac.purdue.edu/file-manager?origin_id=c4ec6812-3315-11ee-b543-e72de9e39f95&origin_path=%2F
-#### Note: When unzipping .tar.gz snapshots, include the --strip-components=4 flag in the tar statement, ex: tar --strip-components=4 -xvzf {name}.tar.gz. If you do not do this, you will have 4 extraneous parent directories that encase the repository.
+#### - Note: When unzipping .tar.gz snapshots, include the ```--strip-components=4``` flag in the tar statement, ex: ```tar --strip-components=4 -xvzf {name}.tar.gz```. If you do not do this, you will have 4 extraneous parent directories that encase the repository.
 
 ### Captured Model Hubs
 
@@ -83,15 +85,17 @@ Alternatively, you can navigate to each packages respective pages and install th
 This section will explain how to use SQL and SQLAlchemy to interact with the database to answer the research questions outlined in the proposal. 
 
 ### Using SQL to query the database
-One option users have to interact with the metadata dataset is to use plain SQL. The metadata dataset is stored in a SQLite database file called PeaTMOSS.db, which can be found in the Globus Share: https://transfer.rcac.purdue.edu/file-manager?origin_id=c4ec6812-3315-11ee-b543-e72de9e39f95&origin_path=%2F. This file can be queried through standard SQL queries, and this can be done from a terminal using sqlite3: https://sqlite.org/cli.html. Single queries can be executed like ```sqlite3 PeaTMOSS.db '{query statement}'```. Alternatively, you can start an SQLite instance by simply executing ```sqlite3 PeaTMOSS.db```, which can be terminated by CTRL + D. To output queries to files, the .output command can be used as such: ```sqlite> .output {filename}.txt```. The following example has to do with research question GH2: "What do developers on GitHub discuss related to PTM use, e.g., in issues, and pull requests? What are developers’ sentiments regarding PTM use? Do the people do pull requests of PTMs have the right expertise?" 
+One option users have to interact with the metadata dataset is to use plain SQL. The metadata dataset is stored in a SQLite database file called PeaTMOSS.db, which can be found in the [Globus Share](https://transfer.rcac.purdue.edu/file-manager?origin_id=c4ec6812-3315-11ee-b543-e72de9e39f95&origin_path=%2F). This file can be queried through standard SQL queries, and this can be done from a terminal using sqlite3: https://sqlite.org/cli.html. Single queries can be executed like ```sqlite3 PeaTMOSS.db '{query statement}'```. Alternatively, you can start an SQLite instance by simply executing ```sqlite3 PeaTMOSS.db```, which can be terminated by CTRL + D. To output queries to files, the .output command can be used as such: ```sqlite> .output {filename}.txt```. The following example has to do with research question GH2: "What do developers on GitHub discuss related to PTM use, e.g., in issues, and pull requests? What are developers’ sentiments regarding PTM use? Do the people do pull requests of PTMs have the right expertise?" 
 
 If someone wants to observe what developers on GitHub are currently discussing related to PTM usage, they can look at discussions in GitHub issues and pull requests. The following SQLite example shows queries that would help accomplish this task.
 
-First, we will create an sqlite3 instance:
-```$ sqlite3 PeaTMOSS.db```
-
-Then, we will create an output file for our issues query, then execute that query:
+1. First, we will create an sqlite3 instance:
+```bash
+$ sqlite3 PeaTMOSS.db
 ```
+
+3. Then, we will create an output file for our issues query, then execute that query:
+```bash
 sqlite> .output issues.txt
 sqlite> SELECT id, title FROM github_issue WHERE state = 'OPEN' ORDER BY updated_at DESC LIMIT 100;
 ```
@@ -101,8 +105,8 @@ Output:
 
 The above query selects the ID and Title fields from the github_issue table, and chooses the 100 most recent issues that are still open.
 
-Next, we will create an output file for our pull requests query, then execute that query:
-```
+3. Next, we will create an output file for our pull requests query, then execute that query:
+```bash
 sqlite> .output pull_requests.txt
 sqlite> SELECT id, title FROM github_pull_request WHERE state = 'OPEN' OR state = 'MERGED' ORDER BY updated_at DESC LIMIT 100;
 ```
@@ -117,25 +121,25 @@ Querying this data can assist when beginning to observe current/recent discussio
 
 ### Using ORMs to query the database
 
-This section will include more details about the demo provided in the repository, PeaTMOSS_demo.py. Once again, this method requires the PeaTMOSS.db file, which can be found in the Globus Share: https://transfer.rcac.purdue.edu/file-manager?origin_id=c4ec6812-3315-11ee-b543-e72de9e39f95&origin_path=%2F. Prior to running this demo, ensure that the conda environment has been created and activated, or you may run into errors. 
+This section will include more details about the demo provided in the repository, PeaTMOSS_demo.py. Once again, this method requires the PeaTMOSS.db file, which can be found in the [Globus Share](https://transfer.rcac.purdue.edu/file-manager?origin_id=c4ec6812-3315-11ee-b543-e72de9e39f95&origin_path=%2F). Prior to running this demo, ensure that the conda environment has been created and activated, or you may run into errors. 
 
 The purpose of the demo, as described at by the comment at the top of its file, is to demonstrate how one may use SQLAlchemy to address one of the research questions. The question being addressed in the demo is I1: "It can be difficult to interpret model popularity numbers by download rates. To what extent does a PTM’s download rates correlate with the number of GitHub projects that rely on it, or the popularity of the GitHub projects?". The demo accomplishes this by looking at two main fields: the number of times a model is downloaded from its model hub, and the number of times a model is reused in a GitHub repository. The demo finds the 100 most downloaded models, and finds how many times each of those models are reused. Users can take this information and attempt to find a correlation.
 
 PeaTMOSS_demo.py utilizes PeaTMOSS.py, which is used to describe the structure of the database so that we may interact with it using SQLAlchemy. To begin, you must create and SQLAlchemy engine using the database file: ```engine = sqlalchemy.create_engine(f"sqlite:///{absolute_path}")```, where absolute_path is a string that describes the filepath of the database file. Relative paths are also acceptable. 
 
 To find the 100 most downloaded models, we will query the model table
-```
+```python
 query_name_downloads = sqlalchemy.select(PeaTMOSS.Model.id, PeaTMOSS.Model.context_id, PeaTMOSS.Model.downloads) \
             .limit(100).order_by(sqlalchemy.desc(PeaTMOSS.Model.downloads))
 ```
 and execute the query
-```
+```python
 models = session.execute(query_name_downloads).all()
 ```
 
 For each of these models, we want to know how many times they are being reused. The model_to_reuse_repository contains fields for model IDs and reuse repository IDs, effectively linking them together. If a model is reused in multiple repository its ID will show up multiple times in the model_to_reuse_repository table. Therefore, we want to see if these highly downloaded models are also highly reused. We can do this querying the model_to_reuse_repository table and only select entries where the model_id field is equivalent to the current model's ID:
 
-```
+```python
 for model in models:
     ...
     query_num_reuses = sqlalchemy.select(PeaTMOSS.model_to_reuse_repository.columns.model_id) \
@@ -143,10 +147,12 @@ for model in models:
 
 ```
 This query will select all the instances of the current model's ID appears in the model_to_reuse_repository table. If we execute this query and count the number of elements in the result, we have the number of times that model has been reused:
-```num_reuses = len(session.execute(query_num_reuses).all())```
+```python
+num_reuses = len(session.execute(query_num_reuses).all())
+```
 
 In each iteration of the loop we can store this information in dictionaries, where the keys can be the names of the models:
-```
+```python
 for model in models:
     highly_downloaded[model.context_id] = model.downloads
     ...
