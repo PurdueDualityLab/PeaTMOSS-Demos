@@ -42,6 +42,8 @@ class Model(BASE):
     reuse_repositories = relationship("ReuseRepository", secondary="model_to_reuse_repository")
     tags = relationship("Tag", secondary="model_to_tag")
 
+# Used to create a many-to-many relationship between the model table and the GitHubPRIssueBlob table
+# without explicitly declaring it to be a many to many relationship
 class GitHubBlob(BASE):
     __tablename__ = "github_blob"
     id = Column(Integer, primary_key=True)
@@ -49,6 +51,7 @@ class GitHubBlob(BASE):
     model = relationship("Model", back_populates="pt_github_blob")
     github_pr_issues = relationship("GitHubPRIssueBlob", back_populates="blob")
 
+# The hf_commit_history_blob table contains the commit history for the HF PTMs as a JSON blob
 class HFCommitHistoryBlob(BASE):
     __tablename__ = "hf_commit_history_blob"
     id = Column(Integer, primary_key=True)
@@ -56,6 +59,7 @@ class HFCommitHistoryBlob(BASE):
     model = relationship("Model", back_populates="hf_commit_history")
     commit_history = Column(String)
 
+# The github_pr_issue_blob table contains the pull requests and issues associated with the PTMs as JSON blobs
 class GitHubPRIssueBlob(BASE):
     __tablename__ = "github_pr_issue_blob"
     id = Column(Integer, primary_key=True)

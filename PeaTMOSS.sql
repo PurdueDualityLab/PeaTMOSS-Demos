@@ -1,10 +1,65 @@
-CREATE TABLE github_assignee (
+CREATE TABLE github_blob (
         id INTEGER NOT NULL, 
-        login VARCHAR, 
+        repo_url VARCHAR, 
+        PRIMARY KEY (id)
+);
+CREATE TABLE model_hub (
+        id INTEGER NOT NULL, 
         name VARCHAR, 
-        issue_id INTEGER, 
+        url VARCHAR, 
         PRIMARY KEY (id), 
-        FOREIGN KEY(issue_id) REFERENCES github_issue (id)
+        UNIQUE (name), 
+        UNIQUE (url)
+);
+CREATE TABLE architecture (
+        id INTEGER NOT NULL, 
+        name VARCHAR, 
+        PRIMARY KEY (id), 
+        UNIQUE (name)
+);
+CREATE TABLE author (
+        id INTEGER NOT NULL, 
+        name VARCHAR, 
+        PRIMARY KEY (id), 
+        UNIQUE (name)
+);
+CREATE TABLE framework (
+        id INTEGER NOT NULL, 
+        name VARCHAR, 
+        PRIMARY KEY (id), 
+        UNIQUE (name)
+);
+CREATE TABLE language (
+        id INTEGER NOT NULL, 
+        name VARCHAR, 
+        abbreviation VARCHAR, 
+        PRIMARY KEY (id), 
+        UNIQUE (name), 
+        UNIQUE (abbreviation)
+);
+CREATE TABLE library (
+        id INTEGER NOT NULL, 
+        name VARCHAR, 
+        PRIMARY KEY (id), 
+        UNIQUE (name)
+);
+CREATE TABLE license (
+        id INTEGER NOT NULL, 
+        name VARCHAR, 
+        PRIMARY KEY (id), 
+        UNIQUE (name)
+);
+CREATE TABLE paper (
+        id INTEGER NOT NULL, 
+        name VARCHAR, 
+        PRIMARY KEY (id), 
+        UNIQUE (name)
+);
+CREATE TABLE tag (
+        id INTEGER NOT NULL, 
+        name VARCHAR, 
+        PRIMARY KEY (id), 
+        UNIQUE (name)
 );
 CREATE TABLE reuse_repository (
         id INTEGER NOT NULL, 
@@ -95,6 +150,29 @@ CREATE TABLE github_user (
         PRIMARY KEY (id), 
         UNIQUE (login)
 );
+CREATE TABLE model (
+        id INTEGER NOT NULL, 
+        context_id INTEGER, 
+        model_hub_id INTEGER, 
+        sha VARCHAR, 
+        repo_url VARCHAR, 
+        downloads INTEGER, 
+        likes INTEGER, 
+        has_snapshot INTEGER, 
+        pt_github_blob_id INTEGER, 
+        PRIMARY KEY (id), 
+        UNIQUE (context_id), 
+        FOREIGN KEY(model_hub_id) REFERENCES model_hub (id), 
+        FOREIGN KEY(pt_github_blob_id) REFERENCES github_blob (id)
+);
+CREATE TABLE github_pr_issue_blob (
+        id INTEGER NOT NULL, 
+        type VARCHAR, 
+        blob_id INTEGER, 
+        gh_pr_issue VARCHAR, 
+        PRIMARY KEY (id), 
+        FOREIGN KEY(blob_id) REFERENCES github_blob (id)
+);
 CREATE TABLE github_issue (
         id INTEGER NOT NULL, 
         author_id INTEGER, 
@@ -170,228 +248,6 @@ CREATE TABLE github_status_check_rollup (
         pull_request_id INTEGER, 
         PRIMARY KEY (id), 
         FOREIGN KEY(pull_request_id) REFERENCES github_pull_request (id)
-);
-CREATE TABLE file_path (
-        id INTEGER NOT NULL, 
-        path VARCHAR, 
-        discussion_id INTEGER, 
-        PRIMARY KEY (id), 
-        FOREIGN KEY(discussion_id) REFERENCES discussion (id)
-);
-CREATE TABLE issue_to_assignee (
-        issue_id INTEGER NOT NULL, 
-        assignee_id INTEGER NOT NULL, 
-        PRIMARY KEY (issue_id, assignee_id), 
-        FOREIGN KEY(issue_id) REFERENCES github_issue (id), 
-        FOREIGN KEY(assignee_id) REFERENCES github_user (id)
-);
-CREATE TABLE github_comment (
-        id INTEGER NOT NULL, 
-        author_id INTEGER, 
-        author_association VARCHAR, 
-        body VARCHAR, 
-        created_at VARCHAR, 
-        includes_created_edit INTEGER, 
-        is_minimized INTEGER, 
-        minimized_reason VARCHAR, 
-        issue_id INTEGER, 
-        pull_request_id INTEGER, 
-        PRIMARY KEY (id), 
-        FOREIGN KEY(author_id) REFERENCES github_user (id), 
-        FOREIGN KEY(issue_id) REFERENCES github_issue (id), 
-        FOREIGN KEY(pull_request_id) REFERENCES github_pull_request (id)
-);
-CREATE TABLE github_label (
-        id INTEGER NOT NULL, 
-        name VARCHAR, 
-        description VARCHAR, 
-        color VARCHAR, 
-        issue_id INTEGER, 
-        pull_request_id INTEGER, 
-        PRIMARY KEY (id), 
-        FOREIGN KEY(issue_id) REFERENCES github_issue (id), 
-        FOREIGN KEY(pull_request_id) REFERENCES github_pull_request (id)
-);
-CREATE TABLE github_reaction_group (
-        id INTEGER NOT NULL, 
-        content VARCHAR, 
-        total_count INTEGER, 
-        issue_id INTEGER, 
-        pull_request_id INTEGER, 
-        github_comment_id INTEGER, 
-        review_id INTEGER, 
-        PRIMARY KEY (id), 
-        FOREIGN KEY(issue_id) REFERENCES github_issue (id), 
-        FOREIGN KEY(pull_request_id) REFERENCES github_pull_request (id), 
-        FOREIGN KEY(github_comment_id) REFERENCES github_comment (id), 
-        FOREIGN KEY(review_id) REFERENCES github_review (id)
-);
-CREATE TABLE hf_git_ref (
-        id INTEGER NOT NULL, 
-        name VARCHAR, 
-        ref VARCHAR, 
-        target_commit_id INTEGER, 
-        hf_commit_history_id INTEGER, 
-        PRIMARY KEY (id), 
-        FOREIGN KEY(target_commit_id) REFERENCES hf_commit (id), 
-        FOREIGN KEY(hf_commit_history_id) REFERENCES hf_commit_history (id)
-);
-CREATE TABLE model_to_pull_request (
-        model_id INTEGER NOT NULL, 
-        pull_request_id INTEGER NOT NULL, 
-        PRIMARY KEY (model_id, pull_request_id), 
-        FOREIGN KEY(model_id) REFERENCES model (id), 
-        FOREIGN KEY(pull_request_id) REFERENCES github_pull_request (id)
-);
-CREATE TABLE model_to_issue (
-        model_id INTEGER NOT NULL, 
-        issue_id INTEGER NOT NULL, 
-        PRIMARY KEY (model_id, issue_id), 
-        FOREIGN KEY(model_id) REFERENCES model (id), 
-        FOREIGN KEY(issue_id) REFERENCES github_issue (id)
-);
-CREATE TABLE hf_commit_history (
-        id INTEGER NOT NULL, 
-        model_id INTEGER, 
-        PRIMARY KEY (id), 
-        FOREIGN KEY(model_id) REFERENCES model (id)
-);
-CREATE TABLE hf_commit (
-        id INTEGER NOT NULL, 
-        commit_id VARCHAR, 
-        hf_commit_history_id INTEGER, 
-        created_at VARCHAR, 
-        title VARCHAR, 
-        message VARCHAR, 
-        PRIMARY KEY (id), 
-        FOREIGN KEY(hf_commit_history_id) REFERENCES hf_commit_history (id)
-);
-CREATE TABLE hf_commit_to_author (
-        hf_commit_id INTEGER NOT NULL, 
-        author_id INTEGER NOT NULL, 
-        PRIMARY KEY (hf_commit_id, author_id), 
-        FOREIGN KEY(hf_commit_id) REFERENCES hf_commit (id), 
-        FOREIGN KEY(author_id) REFERENCES author (id)
-);
-CREATE TABLE hf_branch (
-        id INTEGER NOT NULL, 
-        name VARCHAR, 
-        ref VARCHAR, 
-        target_commit_id INTEGER, 
-        hf_commit_history_id INTEGER, 
-        PRIMARY KEY (id), 
-        FOREIGN KEY(target_commit_id) REFERENCES hf_commit (id), 
-        FOREIGN KEY(hf_commit_history_id) REFERENCES hf_commit_history (id)
-);
-CREATE TABLE hf_commit_tags (
-        id INTEGER NOT NULL, 
-        name VARCHAR, 
-        ref VARCHAR, 
-        target_commit_id INTEGER, 
-        hf_commit_history_id INTEGER, 
-        PRIMARY KEY (id), 
-        FOREIGN KEY(target_commit_id) REFERENCES hf_commit (id), 
-        FOREIGN KEY(hf_commit_history_id) REFERENCES hf_commit_history (id)
-);
-CREATE TABLE github_pull_request_blob (
-        id INTEGER NOT NULL, 
-        model_id INTEGER, 
-        pull_request VARCHAR, 
-        PRIMARY KEY (id), 
-        FOREIGN KEY(model_id) REFERENCES model (id)
-);
-CREATE TABLE github_issue_blob (
-        id INTEGER NOT NULL, 
-        model_id INTEGER, 
-        issue VARCHAR, 
-        PRIMARY KEY (id), 
-        FOREIGN KEY(model_id) REFERENCES model (id)
-);
-CREATE TABLE github_blob (
-        id INTEGER NOT NULL, 
-        repo_url VARCHAR, 
-        PRIMARY KEY (id)
-);
-CREATE TABLE model_hub (
-        id INTEGER NOT NULL, 
-        name VARCHAR, 
-        url VARCHAR, 
-        PRIMARY KEY (id), 
-        UNIQUE (name), 
-        UNIQUE (url)
-);
-CREATE TABLE architecture (
-        id INTEGER NOT NULL, 
-        name VARCHAR, 
-        PRIMARY KEY (id), 
-        UNIQUE (name)
-);
-CREATE TABLE author (
-        id INTEGER NOT NULL, 
-        name VARCHAR, 
-        PRIMARY KEY (id), 
-        UNIQUE (name)
-);
-CREATE TABLE framework (
-        id INTEGER NOT NULL, 
-        name VARCHAR, 
-        PRIMARY KEY (id), 
-        UNIQUE (name)
-);
-CREATE TABLE language (
-        id INTEGER NOT NULL, 
-        name VARCHAR, 
-        abbreviation VARCHAR, 
-        PRIMARY KEY (id), 
-        UNIQUE (name), 
-        UNIQUE (abbreviation)
-);
-CREATE TABLE library (
-        id INTEGER NOT NULL, 
-        name VARCHAR, 
-        PRIMARY KEY (id), 
-        UNIQUE (name)
-);
-CREATE TABLE license (
-        id INTEGER NOT NULL, 
-        name VARCHAR, 
-        PRIMARY KEY (id), 
-        UNIQUE (name)
-);
-CREATE TABLE paper (
-        id INTEGER NOT NULL, 
-        name VARCHAR, 
-        PRIMARY KEY (id), 
-        UNIQUE (name)
-);
-CREATE TABLE tag (
-        id INTEGER NOT NULL, 
-        name VARCHAR, 
-        PRIMARY KEY (id), 
-        UNIQUE (name)
-);
-CREATE TABLE model (
-        id INTEGER NOT NULL, 
-        context_id INTEGER, 
-        model_hub_id INTEGER, 
-        sha VARCHAR, 
-        repo_url VARCHAR, 
-        downloads INTEGER, 
-        likes INTEGER, 
-        has_snapshot INTEGER, 
-        pt_github_blob_id INTEGER, 
-        PRIMARY KEY (id), 
-        UNIQUE (context_id), 
-        FOREIGN KEY(model_hub_id) REFERENCES model_hub (id), 
-        FOREIGN KEY(pt_github_blob_id) REFERENCES github_blob (id)
-);
-CREATE TABLE github_pr_issue_blob (
-        id INTEGER NOT NULL, 
-        type VARCHAR, 
-        blob_id INTEGER, 
-        gh_pr_issue VARCHAR, 
-        PRIMARY KEY (id), 
-        FOREIGN KEY(blob_id) REFERENCES github_blob (id)
 );
 CREATE TABLE hf_commit_history_blob (
         id INTEGER NOT NULL, 
@@ -491,6 +347,47 @@ CREATE TABLE model_to_reuse_repository (
         FOREIGN KEY(model_id) REFERENCES model (id), 
         FOREIGN KEY(reuse_repository_id) REFERENCES reuse_repository (id)
 );
+CREATE TABLE issue_to_assignee (
+        issue_id INTEGER NOT NULL, 
+        assignee_id INTEGER NOT NULL, 
+        PRIMARY KEY (issue_id, assignee_id), 
+        FOREIGN KEY(issue_id) REFERENCES github_issue (id), 
+        FOREIGN KEY(assignee_id) REFERENCES github_user (id)
+);
+CREATE TABLE github_comment (
+        id INTEGER NOT NULL, 
+        author_id INTEGER, 
+        author_association VARCHAR, 
+        body VARCHAR, 
+        created_at VARCHAR, 
+        includes_created_edit INTEGER, 
+        is_minimized INTEGER, 
+        minimized_reason VARCHAR, 
+        issue_id INTEGER, 
+        pull_request_id INTEGER, 
+        PRIMARY KEY (id), 
+        FOREIGN KEY(author_id) REFERENCES github_user (id), 
+        FOREIGN KEY(issue_id) REFERENCES github_issue (id), 
+        FOREIGN KEY(pull_request_id) REFERENCES github_pull_request (id)
+);
+CREATE TABLE github_label (
+        id INTEGER NOT NULL, 
+        name VARCHAR, 
+        description VARCHAR, 
+        color VARCHAR, 
+        issue_id INTEGER, 
+        pull_request_id INTEGER, 
+        PRIMARY KEY (id), 
+        FOREIGN KEY(issue_id) REFERENCES github_issue (id), 
+        FOREIGN KEY(pull_request_id) REFERENCES github_pull_request (id)
+);
+CREATE TABLE file_path (
+        id INTEGER NOT NULL, 
+        path VARCHAR, 
+        discussion_id INTEGER, 
+        PRIMARY KEY (id), 
+        FOREIGN KEY(discussion_id) REFERENCES discussion (id)
+);
 CREATE TABLE discussion_event (
         id INTEGER NOT NULL, 
         event_id VARCHAR, 
@@ -508,4 +405,18 @@ CREATE TABLE discussion_event (
         discussion_id INTEGER, 
         PRIMARY KEY (id), 
         FOREIGN KEY(discussion_id) REFERENCES discussion (id)
+);
+CREATE TABLE github_reaction_group (
+        id INTEGER NOT NULL, 
+        content VARCHAR, 
+        total_count INTEGER, 
+        issue_id INTEGER, 
+        pull_request_id INTEGER, 
+        github_comment_id INTEGER, 
+        review_id INTEGER, 
+        PRIMARY KEY (id), 
+        FOREIGN KEY(issue_id) REFERENCES github_issue (id), 
+        FOREIGN KEY(pull_request_id) REFERENCES github_pull_request (id), 
+        FOREIGN KEY(github_comment_id) REFERENCES github_comment (id), 
+        FOREIGN KEY(review_id) REFERENCES github_review (id)
 );
