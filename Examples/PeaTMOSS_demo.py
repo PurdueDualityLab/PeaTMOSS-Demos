@@ -1,6 +1,6 @@
 import sqlalchemy
 from sqlalchemy.orm import Session
-import PeaTMOSS
+from PeaTMOSS import *
 
 ### This demo is an example of how one could use SQLAlchemy to interact with the PeaTMOSS database in order to answer
 ### one of the research questions, in this case question I1: "It can be difficult to interpret model popularity numbers by 
@@ -19,8 +19,8 @@ if __name__ == "__main__":
     reused_rates = {}
     with Session(engine) as session:
         # Query the 100 most downloaded models from the Model table
-        query_name_downloads = sqlalchemy.select(PeaTMOSS.Model.id, PeaTMOSS.Model.context_id, PeaTMOSS.Model.downloads) \
-            .limit(100).order_by(sqlalchemy.desc(PeaTMOSS.Model.downloads)) # The Model class is declared in PeaTMOSS
+        query_name_downloads = sqlalchemy.select(Model.id, Model.context_id, Model.downloads) \
+            .limit(100).order_by(sqlalchemy.desc(Model.downloads)) # The Model class is declared in PeaTMOSS
         '''
         Equivalent SQL query to the above SQLAlchemy statement:
 
@@ -39,8 +39,8 @@ if __name__ == "__main__":
         for model in models:
             highly_downloaded[model.context_id] = model.downloads
             # Query the instances where this model's ID appears in the model_to_reuse_repository table 
-            query_num_reuses = sqlalchemy.select(PeaTMOSS.model_to_reuse_repository.columns.model_id) \
-                .where(PeaTMOSS.model_to_reuse_repository.columns.model_id == model.id)
+            query_num_reuses = sqlalchemy.select(model_to_reuse_repository.columns.model_id) \
+                .where(model_to_reuse_repository.columns.model_id == model.id)
             '''
             Equivalent SQL query to the above SQLAlchemy statement:
 

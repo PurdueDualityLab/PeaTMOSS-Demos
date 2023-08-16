@@ -8,8 +8,12 @@ This repository contains information about the **P**re-**T**rained **M**odels in
   - [Metadata Description](#metadata-description)
   - [Dependencies](#dependencies)
   - [How To Install](#how-to-install)
-  - [Tutorial](#tutorial)
   - [How to Run](#how-to-run)
+  - [Tutorial](#tutorial)
+    - [Using SQL to query the database](#using-sql-to-query-the-database)
+    - [Research Question Example (SQL)](#research-question-example-sql)
+    - [Using ORMs to query the database](#using-orms-to-query-the-database)
+    - [Research Question Example (ORM)](#research-question-example-orm)
 
 ## About
 
@@ -22,7 +26,15 @@ and links between the downstream GitHub repositories and the PTM models.
 The schema of the SQLite database is specified by [PeaTMOSS.py](PeaTMOSS.py) and [PeatMOSS.sql](PeatMOSS.sql).
 The sample of the database is [PeaTMOSS_sample.db](PeaTMOSS_sample.db).
 The full database, as well as all captured repository snapshots are available [here](https://transfer.rcac.purdue.edu/file-manager?origin_id=c4ec6812-3315-11ee-b543-e72de9e39f95&origin_path=%2F)
-#### - Note: When unzipping .tar.gz snapshots, include the ```--strip-components=4``` flag in the tar statement, ex: ```tar --strip-components=4 -xvzf {name}.tar.gz```. If you do not do this, you will have 4 extraneous parent directories that encase the repository.
+#### - Note: When unzipping .tar.gz snapshots, include the flag
+```bash
+--strip-components=4
+```
+in the tar statement, like so
+```bash
+tar --strip-components=4 -xvzf {name}.tar.gz
+```
+If you do not do this, you will have 4 extraneous parent directories that encase the repository.
 
 
 
@@ -101,7 +113,22 @@ After [installing the anaconda environment](#how-to-install), each demo script c
 This section will explain how to use SQL and SQLAlchemy to interact with the database to answer the research questions outlined in the proposal. 
 
 ### Using SQL to query the database
-One option users have to interact with the metadata dataset is to use plain SQL. The metadata dataset is stored in a SQLite database file called PeaTMOSS.db, which can be found in the [Globus Share](https://transfer.rcac.purdue.edu/file-manager?origin_id=c4ec6812-3315-11ee-b543-e72de9e39f95&origin_path=%2F). This file can be queried through standard SQL queries, and this can be done from a terminal using sqlite3: https://sqlite.org/cli.html. Single queries can be executed like ```sqlite3 PeaTMOSS.db '{query statement}'```. Alternatively, you can start an SQLite instance by simply executing ```sqlite3 PeaTMOSS.db```, which can be terminated by CTRL + D. To output queries to files, the .output command can be used as such: ```sqlite> .output {filename}.txt```. The following example has to do with research question GH2: "What do developers on GitHub discuss related to PTM use, e.g., in issues, and pull requests? What are developers’ sentiments regarding PTM use? Do the people do pull requests of PTMs have the right expertise?" 
+One option users have to interact with the metadata dataset is to use plain SQL. The metadata dataset is stored in a SQLite database file called PeaTMOSS.db, which can be found in the [Globus Share](https://transfer.rcac.purdue.edu/file-manager?origin_id=c4ec6812-3315-11ee-b543-e72de9e39f95&origin_path=%2F). This file can be queried through standard SQL queries, and this can be done from a terminal using sqlite3: https://sqlite.org/cli.html. Single queries can be executed like
+```bash
+sqlite3 PeaTMOSS.db '{query statement}'
+```
+Alternatively, you can start an SQLite instance by simply executing
+```bash
+sqlite3 PeaTMOSS.db
+```
+which can be terminated by `CTRL + D` or `.quit`. To output queries to files, the .output command can be used
+```bash
+sqlite> .output {filename}.txt
+```
+
+### Research Question Example (SQL)
+
+The following example has to do with research question GH2: "What do developers on GitHub discuss related to PTM use, e.g., in issues, and pull requests? What are developers’ sentiments regarding PTM use? Do the people do pull requests of PTMs have the right expertise?" 
 
 If someone wants to observe what developers on GitHub are currently discussing related to PTM usage, they can look at discussions in GitHub issues and pull requests. The following SQLite example shows queries that would help accomplish this task.
 
@@ -141,14 +168,26 @@ This section will include more details about the demo provided in the repository
 
 The purpose of the demo, as described at by the comment at the top of its file, is to demonstrate how one may use SQLAlchemy to address one of the research questions. The question being addressed in the demo is I1: "It can be difficult to interpret model popularity numbers by download rates. To what extent does a PTM’s download rates correlate with the number of GitHub projects that rely on it, or the popularity of the GitHub projects?". The demo accomplishes this by looking at two main fields: the number of times a model is downloaded from its model hub, and the number of times a model is reused in a GitHub repository. The demo finds the 100 most downloaded models, and finds how many times each of those models are reused. Users can take this information and attempt to find a correlation.
 
-PeaTMOSS_demo.py utilizes PeaTMOSS.py, which is used to describe the structure of the database so that we may interact with it using SQLAlchemy. To begin, you must create and SQLAlchemy engine using the database file: ```engine = sqlalchemy.create_engine(f"sqlite:///{absolute_path}")```, where absolute_path is a string that describes the filepath of the database file. Relative paths are also acceptable. 
+### Research Question Example (ORM)
+[`PeaTMOSS_demo.py`](examples/PeaTMOSS_demo.py) utilizes [`PeaTMOSS.py`](PeaTMOSS.py), which is used to describe the structure of the database so that we may interact with it using SQLAlchemy. To begin, you must create and SQLAlchemy engine using the database file
+```python
+engine = sqlalchemy.create_engine(f"sqlite:///{path}")
+```
+where `path` is a string that describes the filepath to the database file.
+Both relative and absolute file paths can be used.
 
 To find the 100 most downloaded models, we will query the model table
+
 ```python
-query_name_downloads = sqlalchemy.select(PeaTMOSS.Model.id, PeaTMOSS.Model.context_id, PeaTMOSS.Model.downloads) \
-            .limit(100).order_by(sqlalchemy.desc(PeaTMOSS.Model.downloads))
+import sqlalchemy
+from sqlalchemy.orm import Session
+from PeaTMOSS import *
+
+query_name_downloads = sqlalchemy.select(Model.id, Model.context_id, Model.downloads).limit(100).order_by(sqlalchemy.desc(Model.downloads))
 ```
+
 and execute the query
+
 ```python
 models = session.execute(query_name_downloads).all()
 ```
@@ -157,9 +196,9 @@ For each of these models, we want to know how many times they are being reused. 
 
 ```python
 for model in models:
-    ...
-    query_num_reuses = sqlalchemy.select(PeaTMOSS.model_to_reuse_repository.columns.model_id) \
-                .where(PeaTMOSS.model_to_reuse_repository.columns.model_id == model.id)
+    #...
+    query_num_reuses = sqlalchemy.select(PeaTMOSS.model_to_reuse_repository.columns.model_id)\
+    .where(PeaTMOSS.model_to_reuse_repository.columns.model_id == model.id)
 
 ```
 This query will select all the instances of the current model's ID appears in the model_to_reuse_repository table. If we execute this query and count the number of elements in the result, we have the number of times that model has been reused:
