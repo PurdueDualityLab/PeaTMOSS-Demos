@@ -86,7 +86,7 @@ Alternatively, you can navigate to each packages respective pages and install th
 This section will explain how to use SQL and SQLAlchemy to interact with the database to answer the research questions outlined in the proposal. 
 
 ### Using SQL to query the database
-The metadata dataset is stored in a SQLite database file called PeaTMOSS.db, which can be found in the Globus Share: https://transfer.rcac.purdue.edu/file-manager?origin_id=c4ec6812-3315-11ee-b543-e72de9e39f95&origin_path=%2F. This file can be queried through standard SQL queries, and this can be done from a terminal using sqlite3: https://sqlite.org/cli.html. Single queries can be executed like ```sqlite3 PeaTMOSS.db '{query statement}'```. Alternatively, you can start an SQLite instance by simply executing ```sqlite3 PeaTMOSS.db```, which can be terminated by CTRL + D. To output queries to files, the .output command can be used as such: ```sqlite> .output {filename}.txt```. The following example has to do with research question GH2: "What do developers on GitHub discuss related to PTM use, e.g., in issues, and pull requests? What are developers’ sentiments regarding PTM use? Do the people do pull requests of PTMs have the right expertise?" 
+One option users have to interact with the metadata dataset is to use plain SQL. The metadata dataset is stored in a SQLite database file called PeaTMOSS.db, which can be found in the Globus Share: https://transfer.rcac.purdue.edu/file-manager?origin_id=c4ec6812-3315-11ee-b543-e72de9e39f95&origin_path=%2F. This file can be queried through standard SQL queries, and this can be done from a terminal using sqlite3: https://sqlite.org/cli.html. Single queries can be executed like ```sqlite3 PeaTMOSS.db '{query statement}'```. Alternatively, you can start an SQLite instance by simply executing ```sqlite3 PeaTMOSS.db```, which can be terminated by CTRL + D. To output queries to files, the .output command can be used as such: ```sqlite> .output {filename}.txt```. The following example has to do with research question GH2: "What do developers on GitHub discuss related to PTM use, e.g., in issues, and pull requests? What are developers’ sentiments regarding PTM use? Do the people do pull requests of PTMs have the right expertise?" 
 
 If someone wants to observe what developers on GitHub are currently discussing related to PTM usage, they can look at discussions in GitHub issues and pull requests. The following SQLite example shows queries that would help accomplish this task.
 
@@ -116,6 +116,49 @@ Output:
 Notice that the query is very similar to the issues query, as we are looking for similar information. The above query selects the ID and Title fields from the github_pull_request table, and chooses the 100 most recent pull requests that are either open or merged.
 
 Querying this data can assist when beginning to observe current/recent discussions in GitHub about PTMs. From here, you may adjust these queries to include more/less entries by changing the LIMIT value, or you may adjust which fields the queries return. For example, if you want more detailed information you could select the "body" field in either table.
+
+
+### Using ORMs to query the database (SQLAlchemy)
+
+This section will include more details about the demo provided in the repository, PeaTMOSS_demo.py. Once again, this method requires the PeaTMOSS.db file, which can be found in the Globus Share: https://transfer.rcac.purdue.edu/file-manager?origin_id=c4ec6812-3315-11ee-b543-e72de9e39f95&origin_path=%2F. Prior to running this demo, ensure that the conda environment has been created and activated, or you may run into errors. 
+
+The purpose of the demo, as described at by the comment at the top of its file, is to demonstrate how one may use SQLAlchemy to address one of the research questions. The question being addressed in the demo is I1: "It can be difficult to interpret model popularity numbers by download rates. To what extent does a PTM’s download rates correlate with the number of GitHub projects that rely on it, or the popularity of the GitHub projects?". The demo accomplishes this by looking at two main fields: the number of times a model is downloaded from its model hub, and the number of times a model is reused in a GitHub repository. The demo finds the 100 most downloaded models, and finds how many times each of those models are reused. Users can take this information and attempt to find a correlation.
+
+PeaTMOSS_demo.py utilizes PeaTMOSS.py, which is used to describe the structure of the database so that we may interact with it using SQLAlchemy. To begin, you must create and SQLAlchemy engine using the database file: ```engine = sqlalchemy.create_engine(f"sqlite:///{absolute_path}")```, where absolute_path is a string that describes the filepath of the database file. Relative paths are also acceptable. 
+
+To find the 100 most downloaded models, we will query the model table
+```
+query_name_downloads = sqlalchemy.select(PeaTMOSS.Model.id, PeaTMOSS.Model.context_id, PeaTMOSS.Model.downloads) \
+            .limit(100).order_by(sqlalchemy.desc(PeaTMOSS.Model.downloads))
+```
+and execute the query
+```
+models = session.execute(query_name_downloads).all()
+```
+
+For each of these models, we want to know how many times they are being reused. The model_to_reuse_repository contains fields for model IDs and reuse repository IDs, effectively linking them together. If a model is reused in multiple repository its ID will show up multiple times in the model_to_reuse_repository table. Therefore, we want to see if these highly downloaded models are also highly reused. We can do this querying the model_to_reuse_repository table and only select entries where the model_id field is equivalent to the current model's ID:
+
+```
+for model in models:
+    ...
+    query_num_reuses = sqlalchemy.select(PeaTMOSS.model_to_reuse_repository.columns.model_id) \
+                .where(PeaTMOSS.model_to_reuse_repository.columns.model_id == model.id)
+
+```
+This query will select all the instances of the current model's ID appears in the model_to_reuse_repository table. If we execute this query and count the number of elements in the result, we have the number of times that model has been reused:
+```num_reuses = len(session.execute(query_num_reuses).all())```
+
+In each iteration of the loop we can store this information in dictionaries, where the keys can be the names of the models:
+```
+for model in models:
+    highly_downloaded[model.context_id] = model.downloads
+    ...
+    ...
+    reused_rates[model.context_id] = num_reuses
+```
+And then at the end, we can simply print the results. From there, users may observe a level of correlation using a method they see fit. 
+
+Results:
 
 
 ## How to Run
