@@ -27,9 +27,13 @@ class Model(BASE):
     repo_url = Column(String)
     downloads = Column(Integer)
     likes = Column(Integer)
+    has_snapshot = Column(Integer)
     architectures = relationship("Architecture", secondary="model_to_architecture")
     authors = relationship("Author", secondary="model_to_author")
     discussions = relationship("Discussion", back_populates="model")
+    hf_commit_history = relationship("HFCommitHistoryBlob", back_populates="model")
+    pt_github_blob_id = Column(Integer, ForeignKey("github_blob.id"))
+    pt_github_blob = relationship("GitHubBlob", back_populates="model")
     frameworks = relationship("Framework", secondary="model_to_framework")
     languages = relationship("Language", secondary="model_to_language")
     libraries = relationship("Library", secondary="model_to_library")
@@ -37,6 +41,28 @@ class Model(BASE):
     papers = relationship("Paper", secondary="model_to_paper")
     reuse_repositories = relationship("ReuseRepository", secondary="model_to_reuse_repository")
     tags = relationship("Tag", secondary="model_to_tag")
+
+class GitHubBlob(BASE):
+    __tablename__ = "github_blob"
+    id = Column(Integer, primary_key=True)
+    repo_url = Column(String)
+    model = relationship("Model", back_populates="pt_github_blob")
+    github_pr_issues = relationship("GitHubPRIssueBlob", back_populates="blob")
+
+class HFCommitHistoryBlob(BASE):
+    __tablename__ = "hf_commit_history_blob"
+    id = Column(Integer, primary_key=True)
+    model_id = Column(Integer, ForeignKey("model.id"))
+    model = relationship("Model", back_populates="hf_commit_history")
+    commit_history = Column(String)
+
+class GitHubPRIssueBlob(BASE):
+    __tablename__ = "github_pr_issue_blob"
+    id = Column(Integer, primary_key=True)
+    type = Column(String)
+    blob_id = Column(Integer, ForeignKey("github_blob.id"))
+    blob = relationship("GitHubBlob", back_populates="github_pr_issues")
+    gh_pr_issue = Column(String)
 
 class ModelHub(BASE):
     __tablename__ = "model_hub"
