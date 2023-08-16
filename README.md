@@ -8,10 +8,6 @@ All zipped repos and the full metadata dataset are available through Globus Shar
 
 If you do not have an account, follow the Globus docs on how to sign up: https://docs.globus.org/how-to/get-started/. You may create an account through a partnered organization if you are a part of that organization, or through Google or ORCID accounts.
 
-# include note about unzipping tar files
-
-
-
 - [PeaTMOSS-Demos](#PeaTMOSS-Demos)
   - [Table of Contents](#table-of-contents)
   - [About](#about)
@@ -53,6 +49,7 @@ and links between the downstream GitHub repositories and the PTM models.
 The schema of the SQLite database is specified by [PeaTMOSS.py](PeaTMOSS.py) and [PeatMOSS.sql](PeatMOSS.sql).
 The sample of the database is [PeaTMOSS_sample.db](PeaTMOSS_sample.db).
 The full database, as well as all captured repository snapshots are available here: https://transfer.rcac.purdue.edu/file-manager?origin_id=c4ec6812-3315-11ee-b543-e72de9e39f95&origin_path=%2F
+#### Note: When unzipping .tar.gz snapshots, include the --strip-components=4 flag in the tar statement, ex: tar --strip-components=4 -xvzf {name}.tar.gz. If you do not do this, you will have 4 extraneous parent directories that encase the repository.
 
 ### Captured Model Hubs
 
