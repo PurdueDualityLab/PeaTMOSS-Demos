@@ -115,11 +115,11 @@ This section will explain how to use SQL and SQLAlchemy to interact with the dat
 ### Using SQL to query the database
 One option users have to interact with the metadata dataset is to use plain SQL. The metadata dataset is stored in a SQLite database file called PeaTMOSS.db, which can be found in the [Globus Share](https://transfer.rcac.purdue.edu/file-manager?origin_id=c4ec6812-3315-11ee-b543-e72de9e39f95&origin_path=%2F). This file can be queried through standard SQL queries, and this can be done from a terminal using sqlite3: https://sqlite.org/cli.html. Single queries can be executed like
 ```bash
-sqlite3 PeaTMOSS.db '{query statement}'
+$ sqlite3 PeaTMOSS.db '{query statement}'
 ```
 Alternatively, you can start an SQLite instance by simply executing
 ```bash
-sqlite3 PeaTMOSS.db
+$ sqlite3 PeaTMOSS.db
 ```
 which can be terminated by `CTRL + D` or `.quit`. To output queries to files, the .output command can be used
 ```bash
@@ -171,6 +171,7 @@ The purpose of the demo, as described at by the comment at the top of its file, 
 ### Research Question Example (ORM)
 [`PeaTMOSS_demo.py`](examples/PeaTMOSS_demo.py) utilizes [`PeaTMOSS.py`](PeaTMOSS.py), which is used to describe the structure of the database so that we may interact with it using SQLAlchemy. To begin, you must create and SQLAlchemy engine using the database file
 ```python
+import sqlalchemy
 engine = sqlalchemy.create_engine(f"sqlite:///{path}")
 ```
 where `path` is a string that describes the filepath to the database file.
@@ -198,7 +199,7 @@ For each of these models, we want to know how many times they are being reused. 
 for model in models:
     #...
     query_num_reuses = sqlalchemy.select(PeaTMOSS.model_to_reuse_repository.columns.model_id)\
-    .where(PeaTMOSS.model_to_reuse_repository.columns.model_id == model.id)
+                                  .where(PeaTMOSS.model_to_reuse_repository.columns.model_id == model.id)
 
 ```
 This query will select all the instances of the current model's ID appears in the model_to_reuse_repository table. If we execute this query and count the number of elements in the result, we have the number of times that model has been reused:
@@ -210,8 +211,8 @@ In each iteration of the loop we can store this information in dictionaries, whe
 ```python
 for model in models:
     highly_downloaded[model.context_id] = model.downloads
-    ...
-    ...
+    #...
+    #...
     reused_rates[model.context_id] = num_reuses
 ```
 And then at the end, we can simply print the results. From there, users may observe a level of correlation using a method they see fit. 
