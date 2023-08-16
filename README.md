@@ -158,8 +158,13 @@ for model in models:
 ```
 And then at the end, we can simply print the results. From there, users may observe a level of correlation using a method they see fit. 
 
-Results:
+Download Results:
 
+<img width="649" alt="5349fd8861432ed693ca27429f569eb3" src="https://github.com/PurdueDualityLab/PeaTMOSS-Demos/assets/70859381/f5d6ee38-adf1-4978-9ae4-6eedb4f5e9be">
+
+Reuse Results:
+
+<img width="656" alt="003113aa18d146f9babc7e9ae1c6c3e0" src="https://github.com/PurdueDualityLab/PeaTMOSS-Demos/assets/70859381/6b835260-8afa-4f1b-9104-9d6a54c9ed44">
 
 ## How to Run
 
