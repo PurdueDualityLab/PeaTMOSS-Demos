@@ -9,7 +9,6 @@ If you do not have an account, follow the Globus docs on how to sign up: https:/
 # include note about unzipping tar files
 
 
-## Table of Contents
 
 - [PeaTMOSS-Demos](#PeaTMOSS-Demos)
   - [Table of Contents](#table-of-contents)
@@ -26,6 +25,20 @@ If you do not have an account, follow the Globus docs on how to sign up: https:/
   - [Example Usage of Dataset](#example-usage-of-dataset)
   - [How to Cite](#how-to-cite)
   - [References](#references)
+
+## Table of Contents
+The content for each specific model hub is listed in the table below:
+
+|   Model hub  |  #PTMs  | #Snapshotted Repos | #Discussions (PRs, issues) | #Links | Size of Zipped Snapshots |
+|:------------:|:-------:|:------------------:|:--------------------------:|:------:|:------------------------:|
+| Hugging Face | 281,276 |       14,899       |           19,436           | 30,514 |           44TB           |
+|  PyTorch Hub |   362   |         361        |           54,064           | 13,823 |           1.3GB          |
+
+We also offer two different formats of our datasets to facilitate the mining challenge for participants. An overview of these two formats can be found in the table below:
+|  Formats |                                                                    Description                                                                   |  Size  |   |   |   |
+|:--------:|:------------------------------------------------------------------------------------------------------------------------------------------------:|:------:|:-:|:-:|:-:|
+| Metadata | It contains only the metadata of the PTM packagesr and a subset of the GitHub project metadata.                                                  |  6.7GB |   |   |   |
+|   Full   | It contains all metadata, adding the PTM package contents in each published version, and git history of the main branhes of the GitHub projects. | 48.2TB |   |   |   |
 
 ## About
 
