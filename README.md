@@ -16,7 +16,7 @@ If you do not have an account, follow the Globus docs on how to sign up: https:/
     - [Captured Model Hubs](#captured-model-hubs)
   - [Dependencies](#dependencies)
   - [How To Install](#how-to-install)
-  - [Tutorial](#Tutorial)
+  - [Tutorial](#tutorial)
     - [SQL](#Using-SQL-to-query-the-database)
     - [ORM](#Using-ORMs-to-query-the-database)
   - [How to Run](#how-to-run)
