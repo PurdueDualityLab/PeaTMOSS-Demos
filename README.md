@@ -14,16 +14,9 @@ If you do not have an account, follow the Globus docs on how to sign up: https:/
     - [Captured Model Hubs](#captured-model-hubs)
   - [Dependencies](#dependencies)
   - [How To Install](#how-to-install)
-    - [From GitHub Releases](#from-github-releases)
-    - [From Source](#from-source)
   - [How to Run](#how-to-run)
-    - [As Individual Scripts](#as-individual-scripts)
-  - [Data Representation](#data-representation)
-  - [Pre-Packaged Dataset](#pre-packaged-dataset)
-  - [Example Usage of Dataset](#example-usage-of-dataset)
-  - [How to Cite](#how-to-cite)
-  - [References](#references)
 
+ 
 ## Table of Contents
 The content for each specific model hub is listed in the table below:
 
