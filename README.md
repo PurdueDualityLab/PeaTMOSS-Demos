@@ -16,6 +16,9 @@ If you do not have an account, follow the Globus docs on how to sign up: https:/
     - [Captured Model Hubs](#captured-model-hubs)
   - [Dependencies](#dependencies)
   - [How To Install](#how-to-install)
+  - [Tutorial](#Tutorial)
+    - [SQL](#Using-SQL-to-query-the-database)
+    - [ORM](#Using-ORMs-to-query-the-database)
   - [How to Run](#how-to-run)
 
 
@@ -110,7 +113,7 @@ Notice that the query is very similar to the issues query, as we are looking for
 Querying this data can assist when beginning to observe current/recent discussions in GitHub about PTMs. From here, you may adjust these queries to include more/less entries by changing the LIMIT value, or you may adjust which fields the queries return. For example, if you want more detailed information you could select the "body" field in either table.
 
 
-### Using ORMs to query the database (SQLAlchemy)
+### Using ORMs to query the database
 
 This section will include more details about the demo provided in the repository, PeaTMOSS_demo.py. Once again, this method requires the PeaTMOSS.db file, which can be found in the Globus Share: https://transfer.rcac.purdue.edu/file-manager?origin_id=c4ec6812-3315-11ee-b543-e72de9e39f95&origin_path=%2F. Prior to running this demo, ensure that the conda environment has been created and activated, or you may run into errors. 
 
