@@ -10,7 +10,7 @@ If you do not have an account, follow the Globus docs on how to sign up: https:/
 
  
 ## Table of Contents
-- [PeaTMOSS-Demos](#PeaTMOSS-Demos)
+- [PeaTMOSS Demos](#peatmoss-demos)
   - [Metadata Description](#metadata-description)
   - [About](#about)
     - [Captured Model Hubs](#captured-model-hubs)
