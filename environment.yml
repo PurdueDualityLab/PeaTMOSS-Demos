@@ -7,3 +7,4 @@ dependencies:
   - python=3.11
   - pip
   - conda-forge::sqlalchemy>=2.0
+  - conda-forge::globus-sdk>=3.0
