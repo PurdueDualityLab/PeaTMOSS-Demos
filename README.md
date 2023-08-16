@@ -8,16 +8,18 @@ All zipped repos and the full metadata dataset are available through Globus Shar
 
 If you do not have an account, follow the Globus docs on how to sign up: https://docs.globus.org/how-to/get-started/. You may create an account through a partnered organization if you are a part of that organization, or through Google or ORCID accounts.
 
+ 
+## Table of Contents
 - [PeaTMOSS-Demos](#PeaTMOSS-Demos)
-  - [Table of Contents](#table-of-contents)
+  - [Metadata Description](#Metadata-Description)
   - [About](#about)
     - [Captured Model Hubs](#captured-model-hubs)
   - [Dependencies](#dependencies)
   - [How To Install](#how-to-install)
   - [How to Run](#how-to-run)
 
- 
-## Table of Contents
+
+## Metadata Description
 The content for each specific model hub is listed in the table below:
 
 |   Model hub  |  #PTMs  | #Snapshotted Repos | #Discussions (PRs, issues) | #Links | Size of Zipped Snapshots |
