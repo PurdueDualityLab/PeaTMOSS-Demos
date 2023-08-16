@@ -42,10 +42,11 @@ task_data = globus_sdk.TransferData(
 
 curr_path = os.getcwd()
 print(curr_path)
-print(f"{curr_path}/PeaTMOSS_DB/")
+### Including ./ at the beginning of the filepath indicates it is in the root
+print("./PeaTMOSS_DB/")
 task_data.add_item(
     "/~/Database/PeaTMOSS.db",  # source
-    f"{curr_path}/PeaTMOSS_DB/PeaTMOSS.db",  # dest
+    f"./PeaTMOSS_DB/PeaTMOSS.db",  # dest
 )
 
 # submit, getting back the task ID
