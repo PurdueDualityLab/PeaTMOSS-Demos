@@ -99,6 +99,7 @@ sqlite> .output issues.txt
 sqlite> SELECT id, title FROM github_issue WHERE state = 'OPEN' ORDER BY updated_at DESC LIMIT 100;
 ```
 Output:
+
 <img width="614" alt="6c66d24cac7cf9542f91d4a875bb1abe" src="https://github.com/PurdueDualityLab/PeaTMOSS-Demos/assets/70859381/3f6d9508-76de-4386-808b-0d9157a8392b">
 
 The above query selects the ID and Title fields from the github_issue table, and chooses the 100 most recent issues that are still open.
@@ -109,7 +110,9 @@ sqlite> .output pull_requests.txt
 sqlite> SELECT id, title FROM github_pull_request WHERE state = 'OPEN' OR state = 'MERGED' ORDER BY updated_at DESC LIMIT 100;
 ```
 Output:
-![Alt text](image-1.png)
+
+<img width="611" alt="b128657ee024e2441110090f3bc19ea6" src="https://github.com/PurdueDualityLab/PeaTMOSS-Demos/assets/70859381/b3773972-9dd0-43e6-8244-3ab1ac94d4dc">
+
 Notice that the query is very similar to the issues query, as we are looking for similar information. The above query selects the ID and Title fields from the github_pull_request table, and chooses the 100 most recent pull requests that are either open or merged.
 
 Querying this data can assist when beginning to observe current/recent discussions in GitHub about PTMs. From here, you may adjust these queries to include more/less entries by changing the LIMIT value, or you may adjust which fields the queries return. For example, if you want more detailed information you could select the "body" field in either table.
