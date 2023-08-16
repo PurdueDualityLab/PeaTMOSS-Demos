@@ -25,10 +25,9 @@ transfer_client = globus_sdk.TransferClient(
 
 PeaTMOSS_endpoint_id = "c4ec6812-3315-11ee-b543-e72de9e39f95"
 local_endpoint = globus_sdk.LocalGlobusConnectPersonal()
-# local_endpoint_id = local_endpoint.endpoint_id 
+### Instead of using local_endpoint.endpoint_id, you may need to copy paste your collection's UUID if local_endpoint.endpoint_id returns None
+local_endpoint_id = local_endpoint.endpoint_id 
 
-### Instead of using local_endpoint.endpoint_id, I just copy pasted my collection's UUID, as local_endpoint.endpoint_id returned None
-local_endpoint_id = "e3c2efc0-3bf5-11ee-920b-5b20905a64b1"
 print(local_endpoint_id)
 
 source_endpoint_id = PeaTMOSS_endpoint_id
