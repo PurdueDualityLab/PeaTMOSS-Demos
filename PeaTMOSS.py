@@ -28,12 +28,16 @@ class Model(BASE):
     downloads = Column(Integer)
     likes = Column(Integer)
     has_snapshot = Column(Integer)
+    datasets = relationship("Dataset", secondary="model_to_dataset")
     architectures = relationship("Architecture", secondary="model_to_architecture")
     authors = relationship("Author", secondary="model_to_author")
     discussions = relationship("Discussion", back_populates="model")
-    hf_commit_history = relationship("HFCommitHistoryBlob", back_populates="model")
-    pt_github_blob_id = Column(Integer, ForeignKey("github_blob.id"))
-    pt_github_blob = relationship("GitHubBlob", back_populates="model")
+    hf_commits = relationship("HFCommit", back_populates="model")
+    hf_gitrefs = relationship("HFGitRef", back_populates="model")
+    ptm_issues_id = Column(Integer, ForeignKey("ptm_issues.id"))
+    ptm_issues = relationship("PTMIssues", back_populates="model")
+    ptm_pull_requests_id = Column(Integer, ForeignKey("ptm_pull_requests.id"))
+    ptm_pull_requests = relationship("PTMPullRequests", back_populates="model")
     frameworks = relationship("Framework", secondary="model_to_framework")
     languages = relationship("Language", secondary="model_to_language")
     libraries = relationship("Library", secondary="model_to_library")
@@ -42,32 +46,92 @@ class Model(BASE):
     reuse_repositories = relationship("ReuseRepository", secondary="model_to_reuse_repository")
     tags = relationship("Tag", secondary="model_to_tag")
 
-# Used to create a many-to-many relationship between the model table and the GitHubPRIssueBlob table
-# without explicitly declaring it to be a many to many relationship
-class GitHubBlob(BASE):
-    __tablename__ = "github_blob"
+# The PTMIssues class as an aggregator for the issues associated with the PTMs
+class PTMIssues(BASE):
+    __tablename__ = "ptm_issues"
     id = Column(Integer, primary_key=True)
-    repo_url = Column(String)
-    model = relationship("Model", back_populates="pt_github_blob")
-    github_pr_issues = relationship("GitHubPRIssueBlob", back_populates="blob")
+    repo_url = Column(String, unique=True)
+    issues = relationship("GitHubIssue", secondary="ptm_issue_to_issue")
+    model = relationship("Model", back_populates="ptm_issues")
 
-# The hf_commit_history_blob table contains the commit history for the HF PTMs as a JSON blob
-class HFCommitHistoryBlob(BASE):
-    __tablename__ = "hf_commit_history_blob"
+# ptm_issue_to_issue is used to create the one-to-many relationship between the ptm_issues table and the github_issue table
+ptm_issue_to_issue = Table(
+    "ptm_issue_to_issue",
+    BASE.metadata,
+    Column("ptm_issue_id", Integer, ForeignKey("ptm_issues.id"), primary_key=True),
+    Column("github_issue_id", Integer, ForeignKey("github_issue.id"), primary_key=True),
+)
+
+# The PTMPullRequests class as an aggregator for the pull requests associated with the PTMs
+class PTMPullRequests(BASE):
+    __tablename__ = "ptm_pull_requests"
     id = Column(Integer, primary_key=True)
+    repo_url = Column(String, unique=True)
+    pull_requests = relationship("GitHubPullRequest", secondary="ptm_pull_request_to_pull_request")
+    model = relationship("Model", back_populates="ptm_pull_requests")
+
+# ptm_pull_request_to_pull_request is used to create the one-to-many relationship between the ptm_pull_requests table and the github_pull_request table
+ptm_pull_request_to_pull_request = Table(
+    "ptm_pull_request_to_pull_request",
+    BASE.metadata,
+    Column("ptm_pull_request_id", Integer, ForeignKey("ptm_pull_requests.id"), primary_key=True),
+    Column("github_pull_request_id", Integer, ForeignKey("github_pull_request.id"), primary_key=True),
+)
+
+# The HFCommit class stores commit info about a model stored on HuggingFace
+class HFCommit(BASE):
+    __tablename__ = "hf_commit"
+    id = Column(Integer, primary_key=True)
+    commit_id = Column(String)
+    authors = relationship("Author", secondary="hf_commit_to_author")
+    created_at = Column(String)
+    title = Column(String)
+    message = Column(String)
     model_id = Column(Integer, ForeignKey("model.id"))
-    model = relationship("Model", back_populates="hf_commit_history")
-    commit_history = Column(String)
+    model = relationship("Model", back_populates="hf_commits")
 
-# The github_pr_issue_blob table contains the pull requests and issues associated with the PTMs as JSON blobs
-class GitHubPRIssueBlob(BASE):
-    __tablename__ = "github_pr_issue_blob"
+# hf_commit_to_author is used to create the many-to-many relationship between the hf_commit table and the author table
+hf_commit_to_author = Table(
+    "hf_commit_to_author",
+    BASE.metadata,
+    Column("hf_commit_id", Integer, ForeignKey("hf_commit.id"), primary_key=True),
+    Column("author_id", Integer, ForeignKey("author.id"), primary_key=True),
+)
+
+# The HFGitRef class stores git ref info about a model stored on HuggingFace
+class HFGitRef(BASE):
+    __tablename__ = "hf_git_ref"
     id = Column(Integer, primary_key=True)
-    type = Column(String)
-    blob_id = Column(Integer, ForeignKey("github_blob.id"))
-    blob = relationship("GitHubBlob", back_populates="github_pr_issues")
-    gh_pr_issue = Column(String)
+    branches = relationship("HFGitRefInfo", secondary="hf_git_ref_to_branch")
+    tags = relationship("HFGitRefInfo", secondary="hf_git_ref_to_tag")
+    model_id = Column(Integer, ForeignKey("model.id"))
+    model = relationship("Model", back_populates="hf_gitrefs")
 
+# hf_git_ref_to_branch is used to create the one-to-many relationship between the hf_git_ref table and the hf_git_ref_info table, specifically to describe the branches
+hf_git_ref_to_branch = Table(
+    "hf_git_ref_to_branch",
+    BASE.metadata,
+    Column("hf_git_ref_id", Integer, ForeignKey("hf_git_ref.id"), primary_key=True),
+    Column("hf_git_ref_info_id", Integer, ForeignKey("hf_git_ref_info.id"), primary_key=True),
+)
+
+# hf_git_ref_to_tag is used to create the one-to-many relationship between the hf_git_ref table and the hf_git_ref_info table, specifically to describe the tags
+hf_git_ref_to_tag = Table(
+    "hf_git_ref_to_tag",
+    BASE.metadata,
+    Column("hf_git_ref_id", Integer, ForeignKey("hf_git_ref.id"), primary_key=True),
+    Column("hf_git_ref_info_id", Integer, ForeignKey("hf_git_ref_info.id"), primary_key=True),
+)
+
+# The HFGitRefInfo class stores info about a branch or tag associated with a model stored on HuggingFace
+class HFGitRefInfo(BASE):
+    __tablename__ = "hf_git_ref_info"
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    ref = Column(String)
+    target_commit = Column(String)
+
+# The ModelHub class stores info about the model hub where a model is stored
 class ModelHub(BASE):
     __tablename__ = "model_hub"
     id = Column(Integer, primary_key=True)
@@ -101,6 +165,14 @@ model_to_author = Table(
     BASE.metadata,
     Column("model_id", Integer, ForeignKey("model.id"), primary_key=True),
     Column("author_id", Integer, ForeignKey("author.id"), primary_key=True),
+)
+
+# model_to_dataset is used to create the many-to-many relationship between the model table and the dataset table
+model_to_dataset = Table(
+    "model_to_dataset",
+    BASE.metadata,
+    Column("model_id", Integer, ForeignKey("model.id"), primary_key=True),
+    Column("dataset_id", Integer, ForeignKey("dataset.id"), primary_key=True),
 )
 
 # model_to_framework is used to create the many-to-many relationship between the model table and the framework table
@@ -170,6 +242,12 @@ class Author(BASE):
     id = Column(Integer, primary_key=True)
     name = Column(String, unique=True)
 
+# The Dataset table contains the datasets used by the model
+class Dataset(BASE):
+    __tablename__ = "dataset"
+    id = Column(Integer, primary_key=True)
+    name = Column(String, unique=True)
+
 # The framework table contains the frameworks used by the model
 class Framework(BASE):
     __tablename__ = "framework"
@@ -224,7 +302,7 @@ class Discussion(BASE):
     num = Column(Integer)
     repo_id = Column(String)
     repo_type = Column(String)
-    author = Column(String)
+    author = relationship("Author", secondary="discussion_to_author")
     is_pull_request = Column(Integer)
     created_at = Column(String)
     endpoint = Column(String)
@@ -235,6 +313,14 @@ class Discussion(BASE):
     model_id = Column(Integer, ForeignKey("model.id"))
     model = relationship("Model", back_populates="discussions")
     events = relationship("DiscussionEvent", back_populates="discussion")
+
+# discussion_to_author is used to create the many-to-many relationship between the discussion table and the author table
+discussion_to_author = Table(
+    "discussion_to_author",
+    BASE.metadata,
+    Column("discussion_id", Integer, ForeignKey("discussion.id"), primary_key=True),
+    Column("author_id", Integer, ForeignKey("author.id"), primary_key=True)
+)
 
 # This table contains the filepaths for any files references by a pull request
 class FilePath(BASE):
@@ -286,13 +372,29 @@ class ReuseRepository(BASE):
     owner = Column(String)
     name = Column(String)
     url = Column(String)
-    issues = relationship("GitHubIssue", back_populates="reuse_repository")
-    pull_requests = relationship("GitHubPullRequest", back_populates="reuse_repository")
+    issues = relationship("GitHubIssue", secondary="reuse_repo_to_issue", back_populates="reuse_repository")
+    pull_requests = relationship("GitHubPullRequest", secondary="reuse_repo_to_pull_request", back_populates="reuse_repository")
     files = relationship("ReuseFile", back_populates="reuse_repository")
 
     __table_args__ = (
         UniqueConstraint("owner", "name", name="unique_owner_name"),
     )
+
+# reuse_repo_to_issue is used to create the many-to-many relationship between the reuse_repository table and the github_issue table
+reuse_repo_to_issue = Table(
+    "reuse_repo_to_issue",
+    BASE.metadata,
+    Column("reuse_repository_id", Integer, ForeignKey("reuse_repository.id"), primary_key=True),
+    Column("github_issue_id", Integer, ForeignKey("github_issue.id"), primary_key=True),
+)
+
+# reuse_repo_to_pull_request is used to create the many-to-many relationship between the reuse_repository table and the github_pull_request table
+reuse_repo_to_pull_request = Table(
+    "reuse_repo_to_pull_request",
+    BASE.metadata,
+    Column("reuse_repository_id", Integer, ForeignKey("reuse_repository.id"), primary_key=True),
+    Column("github_pull_request_id", Integer, ForeignKey("github_pull_request.id"), primary_key=True),
+)
 
 # The reuse_file table contains the specific files in the reuse repositories that use the PTMs
 class ReuseFile(BASE):
@@ -321,7 +423,7 @@ model_to_reuse_repository = Table(
 #   The following tables contain            #
 #   metadata about the issues and           #
 #   pull requests associated with           #
-#   reuse repositories                      #
+#   GitHub repositories                     #
 #                                           #
 ############################################
 
@@ -347,9 +449,8 @@ class GitHubIssue(BASE):
     state = Column(String)
     title = Column(String)
     updated_at = Column(String)
-    url = Column(String)
-    reuse_repository_id = Column(Integer, ForeignKey("reuse_repository.id"))
-    reuse_repository = relationship("ReuseRepository", back_populates="issues")
+    url = Column(String, unique=True)
+    reuse_repository = relationship("ReuseRepository", secondary="reuse_repo_to_issue", back_populates="issues")
 
 # issue_to_assignee is used to create the many-to-many relationship between the github_issue table and the github_user table
 issue_to_assignee = Table(
@@ -407,9 +508,8 @@ class GitHubPullRequest(BASE):
     status_check_rollup = relationship("GitHubStatusCheckRollup", back_populates="pull_request")
     title = Column(String)
     updated_at = Column(String)
-    url = Column(String)
-    reuse_repository_id = Column(Integer, ForeignKey("reuse_repository.id"))
-    reuse_repository = relationship("ReuseRepository", back_populates="pull_requests")
+    url = Column(String, unique=True)
+    reuse_repository = relationship("ReuseRepository", secondary="reuse_repo_to_pull_request", back_populates="pull_requests")
 
 # github_pull_request_file contains the files that were changed in a pull request
 class GitHubPullRequestFile(BASE):
@@ -562,4 +662,3 @@ class GitHubUser(BASE):
     login = Column(String, unique=True)
     email = Column(String)
     name = Column(String)
-
