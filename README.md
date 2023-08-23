@@ -76,7 +76,7 @@ The content for each specific model hub is listed in the table below:
 |   Model hub  |  #PTMs  | #Snapshotted Repos | #Discussions (PRs, issues) | #Links | Size of Zipped Snapshots |
 |:------------:|:-------:|:------------------:|:--------------------------:|:------:|:------------------------:|
 | Hugging Face | 281,276 |       14,899       |           59,011           | 30,514 |           44TB           |
-|  PyTorch Hub |   362   |         361        |           54,064           | 13,823 |           1.3GB          |
+|  PyTorch Hub |   362   |         361        |           52,161           | 13,823 |           1.3GB          |
 
 We also offer two different formats of our datasets to facilitate the mining challenge for participants. An overview of these two formats can be found in the table below:
 |  Formats |                                                                    Description                                                                   |  Size  |
