@@ -1,5 +1,5 @@
 # PeaTMOSS-Demos
-This repository contains information about the **P**re-**T**rained **M**odels in **O**pen-**S**ource **S**oftware (***PeaTMOSS***) dataset proposed for the 2024 MSR Mining Challenge.
+This repository contains information about the **P**re-**T**rained **M**odels in **O**pen-**S**ource **S**oftware (***PeaTMOSS***) dataset.
 
 ## Table of Contents
 - [PeaTMOSS Demos](#peatmoss-demos)
