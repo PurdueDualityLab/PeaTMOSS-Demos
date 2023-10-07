@@ -82,7 +82,7 @@ We also offer two different formats of our datasets to facilitate the mining cha
 |  Formats |                                                                    Description                                                                   |  Size  |
 |:--------:|:------------------------------------------------------------------------------------------------------------------------------------------------:|:------:|
 | Metadata |                          It contains only the metadata of the PTM packagesr and a subset of the GitHub project metadata.                         |  7.12GB |
-|   Full   | It contains all metadata, adding the PTM package contents in each published version, and git history of the main branhes of the GitHub projects. | 48.2TB |
+|   Full   | It contains all metadata, adding the PTM package contents in each published version, and git history of the main branches of the GitHub projects. | 48.2TB |
 
 ## Dependencies
 
